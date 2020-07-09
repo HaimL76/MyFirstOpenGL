@@ -426,7 +426,8 @@ void Render()
     */
     glTranslatef(0.0f, 0.0f, -30.0f);
     glRotatef(angle, 0.0f, 1.0f, 0.0f);
-    DrawRobot(0.0f, 0.0f, 0.0f);
+    //DrawRobot(0.0f, 0.0f, 0.0f);
+    DrawLine(0, 0, 0);
     glPopMatrix();
 
     glFlush();
