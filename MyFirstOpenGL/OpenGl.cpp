@@ -56,8 +56,23 @@ bool fullScreen = false;
 float baseX = 0.0f;
 float baseY = 0.0f;
 
-void DrawLine(float xPos, float yPos, float zPos)
+int color = 0;
+
+void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
 {
+    float red = (color & 0xFF) / 256.0f;
+    float green = (color >> 8 & 0xFF) / 256.0f;
+    float blue = (color++ >> 16 & 0xFF) / 256.0f;
+
+    std::stringstream stream;
+    stream << std::fixed
+        //<< std::setprecision(2)
+        << red << ", " << green << ", " << blue;
+
+    SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
+
+    glColor3f(red, green, blue);
+
     glBegin(GL_LINES);
 
     float x1 = baseX;
@@ -433,7 +448,7 @@ void Render(HWND& hWnd)
         //<< std::setprecision(2)
         << transX;
 
-    SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
+    //SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
 
     glPushMatrix();
     glLoadIdentity();
@@ -457,7 +472,8 @@ void Render(HWND& hWnd)
     //glTranslatef(0.0f, 0.0f, 0.0f);
     //glRotatef(angle, 0.0f, 1.0f, 0.0f);
     //DrawRobot(0.0f, 0.0f, 0.0f);
-    DrawLine(0, 0, 0);
+    glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+    DrawLine(0, 0, 0, hWnd);
     glPopMatrix();
 
     glFlush();
