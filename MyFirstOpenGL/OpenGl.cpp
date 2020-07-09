@@ -25,11 +25,15 @@
 
 #pragma comment(linker, "/subsystem:windows")
 
+#include <sstream>
+#include <math.h>
 #include <windows.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
 #include "MyTime.h"
 //#include <gl/glaux.h>
+
+using namespace std;
 
 /*      Here we find a few global variables. While
         i don't really like to use global variables,
@@ -54,8 +58,6 @@ float baseY = 0.0f;
 
 void DrawLine(float xPos, float yPos, float zPos)
 {
-    glPushMatrix();
-
     glBegin(GL_LINES);
 
     float x1 = baseX;
@@ -69,10 +71,8 @@ void DrawLine(float xPos, float yPos, float zPos)
 
     glEnd();
 
-    glPopMatrix();
-
-    baseX += 0.01f;
-    baseY += 0.01f;
+    //baseX += 0.01f;
+    //baseY += 0.01f;
 }
 
 void DrawCube(float xPos, float yPos, float zPos)
@@ -136,8 +136,6 @@ void DrawArm(float xPos, float yPos, float zPos)
     /*      Creates 1 x 4 x 1 cube*/
     glScalef(1.0f, 4.0f, 1.0f);
     DrawCube(0.0f, 0.0f, 0.0f);
-
-    DrawLine(0, 0, 0);
 
     glPopMatrix();
 }
@@ -392,7 +390,20 @@ void DrawRobot(float xPos, float yPos, float zPos)
                                 for the rendering, got to love my
                                 descriptive function names : )
 */
-void Render()
+
+float red = 0.0f;
+float green = 0.0f;
+float blue = 0.0f;
+
+const float stepX = 0.1f;
+float transX = 0.1f;
+int dirX = 1;
+
+const float stepY = 0.1f;
+float transY = 0.1f;
+int dirY = 1;
+
+void Render(HWND& hWnd)
 {
     /*      Enable depth testing
     */
@@ -402,7 +413,7 @@ void Render()
             to black, clear the color and depth
             buffers, and reset our modelview matrix.
     */
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0, 0, 0, 0);// red += 0.1f, green += 0.1f, blue += 0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
@@ -417,6 +428,13 @@ void Render()
         angle = 0.0f;
     }
 
+    std::stringstream stream;
+    stream << std::fixed 
+        //<< std::setprecision(2)
+        << transX;
+
+    SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
+
     glPushMatrix();
     glLoadIdentity();
 
@@ -424,8 +442,20 @@ void Render()
             its y axis, draw the robot, and dispose
             of the current matrix.
     */
-    glTranslatef(0.0f, 0.0f, -30.0f);
-    glRotatef(angle, 0.0f, 1.0f, 0.0f);
+    transX += dirX * stepX;
+    transY += dirY * stepY;
+
+    //glRotatef(angle, 0.0f, 1.0f, 0.0f);
+    glTranslatef(transX, transY, -30.0f);
+
+    if (abs(transX) > 20)
+        dirX *= -1;
+
+    if (abs(transY) > 20)
+        dirY *= -1;
+
+    //glTranslatef(0.0f, 0.0f, 0.0f);
+    //glRotatef(angle, 0.0f, 1.0f, 0.0f);
     //DrawRobot(0.0f, 0.0f, 0.0f);
     DrawLine(0, 0, 0);
     glPopMatrix();
@@ -682,11 +712,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
             long long timediff = Subtract(sysTime2, sysTime1);
 
-            if (timediff > 126500)
+            if (timediff > 12650)
             {
                 sysTime1 = sysTime2;
 
-                Render();
+                Render(hwnd);
             }
 
             TranslateMessage(&msg);
