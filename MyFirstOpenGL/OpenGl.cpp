@@ -31,6 +31,7 @@
 #include <gl/gl.h>
 #include <gl/glu.h>
 #include "MyTime.h"
+#include <time.h>
 //#include <gl/glaux.h>
 
 using namespace std;
@@ -418,11 +419,14 @@ const float stepY = 0.1f;
 float transY = 0.1f;
 int dirY = 1;
 
-const int angleLimit = 30;
+//const int angleLimit = 30;
 
 int myAngle = 0;
 const float stepAngle = 1.0f;
 int dirAngle = 1;
+
+int angleLimit = 10.0f;
+int angleLimitHalf = 10.0f / 2.0f;
 
 void Render(HWND& hWnd)
 {
@@ -466,12 +470,16 @@ void Render(HWND& hWnd)
     transX += dirX * stepX;
     transY += dirY * stepY;
 
+    int iSecret, iGuess;
+
+    float ang = rand() % angleLimit - angleLimitHalf;
+
+    myAngle += ang;
+
     float angle = myAngle * 3.14 / 180;
 
     transX += stepX * cos(angle) * dirX;//(float)(dirX * stepX) * cos(myAngle);
     transY += stepY * sin(angle) * dirY;//(float)(dirY * stepY) * sin(myAngle);
-
-    myAngle += stepAngle * dirAngle;
 
     glTranslatef(transX, transY, -30.0f);
     glRotatef(myAngle, transX, transY, -30.0f);
@@ -724,6 +732,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     SYSTEMTIME sysTime1, sysTime2;
 
     GetSystemTime(&sysTime1);
+
+    /* initialize random seed: */
+    srand(time(NULL));
 
     /*      Main message loop*/
     while (!done)
