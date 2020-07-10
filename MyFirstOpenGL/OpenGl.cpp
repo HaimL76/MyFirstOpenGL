@@ -32,6 +32,7 @@
 #include <gl/glu.h>
 #include "MyTime.h"
 #include <time.h>
+#include <Windowsx.h>
 //#include <gl/glaux.h>
 
 using namespace std;
@@ -69,8 +70,13 @@ void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
     stream << std::fixed
         //<< std::setprecision(2)
         << red << ", " << green << ", " << blue;
+    stream.str(string());
+    stream << std::fixed << xPos << ", " << yPos;
+
+    //SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
 
     SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
+
 
     //glColor3f(red, green, blue);
 
@@ -559,8 +565,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     */
     int width, height;
 
+    int xPos;
+    int yPos;
+
     switch (message)
     {
+    case WM_MOUSEMOVE:
+        xPos = GET_X_LPARAM(lParam);
+        yPos = GET_Y_LPARAM(lParam);
+        break;
+
     case WM_CREATE: //window being created
 
         hDC = GetDC(hwnd);  //get current windows device context
