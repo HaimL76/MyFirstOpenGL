@@ -71,7 +71,7 @@ void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
 
     SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
 
-    glColor3f(red, green, blue);
+    //glColor3f(red, green, blue);
 
     glBegin(GL_LINES);
 
@@ -418,6 +418,12 @@ const float stepY = 0.1f;
 float transY = 0.1f;
 int dirY = 1;
 
+const int angleLimit = 30;
+
+int myAngle = 0;
+const float stepAngle = 1.0f;
+int dirAngle = 1;
+
 void Render(HWND& hWnd)
 {
     /*      Enable depth testing
@@ -460,8 +466,15 @@ void Render(HWND& hWnd)
     transX += dirX * stepX;
     transY += dirY * stepY;
 
-    //glRotatef(angle, 0.0f, 1.0f, 0.0f);
+    float angle = myAngle * 3.14 / 180;
+
+    transX += stepX * cos(angle) * dirX;//(float)(dirX * stepX) * cos(myAngle);
+    transY += stepY * sin(angle) * dirY;//(float)(dirY * stepY) * sin(myAngle);
+
+    myAngle += stepAngle * dirAngle;
+
     glTranslatef(transX, transY, -30.0f);
+    glRotatef(myAngle, transX, transY, -30.0f);
 
     if (abs(transX) > 20)
         dirX *= -1;
@@ -728,7 +741,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
             long long timediff = Subtract(sysTime2, sysTime1);
 
-            if (timediff > 12650)
+            if (timediff > 12650 * 4.5)
             {
                 sysTime1 = sysTime2;
 
