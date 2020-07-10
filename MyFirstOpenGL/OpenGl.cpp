@@ -44,6 +44,8 @@ using namespace std;
         fullscreen, and the global device context.
 */
 
+int width, height;
+
 HDC g_HDC;
 float angle = 0.0f;
 float legAngle[2] = { 0.0f, 0.0f };
@@ -58,9 +60,15 @@ bool fullScreen = false;
 float baseX = 0.0f;
 float baseY = 0.0f;
 
+float length = 10.0f;
+
 int color = 0;
 
-void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
+int xMousePos, yMousePos;
+
+void DrawLine(
+    //float xPos, float yPos, float zPos, 
+    HWND& hWnd)
 {
     float red = (color & 0xFF) / 256.0f;
     float green = (color >> 8 & 0xFF) / 256.0f;
@@ -71,7 +79,7 @@ void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
         //<< std::setprecision(2)
         << red << ", " << green << ", " << blue;
     stream.str(string());
-    stream << std::fixed << xPos << ", " << yPos;
+    stream << std::fixed << xMousePos << ", " << yMousePos;
 
     //SetWindowTextA(hWnd, stream.str().c_str());// LPCSTR lpString);
 
@@ -82,10 +90,10 @@ void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
 
     glBegin(GL_LINES);
 
-    float x1 = baseX;
-    float y1 = baseY;
+    float x1 = 0.1f;// = xMousePos / (float)width;// baseX;
+    float y1 = 0.1f;// yMousePos / (float)height;// baseY;
 
-    float x2 = x1 + 1.0f;
+    float x2 = x1;// +1.0f;
     float y2 = y1 + 1.0f;
 
     glVertex2f(x1, y1);
@@ -96,322 +104,6 @@ void DrawLine(float xPos, float yPos, float zPos, HWND& hWnd)
     //baseX += 0.01f;
     //baseY += 0.01f;
 }
-
-void DrawCube(float xPos, float yPos, float zPos)
-{
-    glPushMatrix();
-    glBegin(GL_POLYGON);
-
-    /*      This is the top face*/
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, -1.0f);
-    glVertex3f(-1.0f, 0.0f, -1.0f);
-    glVertex3f(-1.0f, 0.0f, 0.0f);
-
-    /*      This is the front face*/
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-    glVertex3f(0.0f, -1.0f, 0.0f);
-
-    /*      This is the right face*/
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, -1.0f, 0.0f);
-    glVertex3f(0.0f, -1.0f, -1.0f);
-    glVertex3f(0.0f, 0.0f, -1.0f);
-
-    /*      This is the left face*/
-    glVertex3f(-1.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, 0.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-
-    /*      This is the bottom face*/
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-
-    /*      This is the back face*/
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, 0.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(0.0f, -1.0f, -1.0f);
-
-    glEnd();
-    glPopMatrix();
-}
-
-/*      Function:       DrawArm
-        Purpose:        This function draws the arm
-                                for the robot.
-*/
-
-void DrawArm(float xPos, float yPos, float zPos)
-{
-    glPushMatrix();
-
-    /*      Sets color to red*/
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glTranslatef(xPos, yPos, zPos);
-
-    /*      Creates 1 x 4 x 1 cube*/
-    glScalef(1.0f, 4.0f, 1.0f);
-    DrawCube(0.0f, 0.0f, 0.0f);
-
-    glPopMatrix();
-}
-
-/*      Function:       DrawHead
-        Purpose:        This function will create the
-                                head for the robot.
-*/
-
-void DrawHead(float xPos, float yPos, float zPos)
-{
-    glPushMatrix();
-
-    /*      Sets color to white*/
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glTranslatef(xPos, yPos, zPos);
-
-    /*      Creates 2 x 2 x 2 cube*/
-    glScalef(2.0f, 2.0f, 2.0f);
-    DrawCube(0.0f, 0.0f, 0.0f);
-
-    glPopMatrix();
-}
-
-/*      Function:       DrawTorso
-        Purpose:        Function will do as suggested
-                                and draw a torso for our robot.
-*/
-
-void DrawTorso(float xPos, float yPos, float zPos)
-{
-    glPushMatrix();
-
-    /*      Sets color to blue*/
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glTranslatef(xPos, yPos, zPos);
-
-    /*      Creates 3 x 5 x 1 cube*/
-    glScalef(3.0f, 5.0f, 1.0f);
-    DrawCube(0.0f, 0.0f, 0.0f);
-
-    glPopMatrix();
-}
-
-/*      Function:       DrawLeg
-        Purpose:        Not to sound repetitve, but as suggested
-                                this function will draw our robots legs.
-*/
-
-void DrawLeg(float xPos, float yPos, float zPos)
-{
-    glPushMatrix();
-
-    /*      Sets color to yellow*/
-    glColor3f(1.0f, 1.0f, 0.0f);
-    glTranslatef(xPos, yPos, zPos);
-
-    /*      Creates 1 x 5 x 1 cube*/
-    glScalef(1.0f, 5.0f, 1.0f);
-    DrawCube(0.0f, 0.0f, 0.0f);
-
-    glPopMatrix();
-}
-
-/*      Function:       DrawRobot
-        Purpose:        Function to draw our entire robot
-*/
-
-void DrawRobot(float xPos, float yPos, float zPos)
-{
-    /*      Variables for state of robots legs. True
-            means the leg is forward, and False means
-            the leg is back. The same applies to the
-            robots arm states.
-    */
-    static bool leg1 = true;
-    static bool leg2 = false;
-    static bool arm1 = true;
-    static bool arm2 = false;
-
-    glPushMatrix();
-
-    /*      This will draw our robot at the
-            desired coordinates.
-    */
-    glTranslatef(xPos, yPos, zPos);
-
-    /*      These three lines will draw the
-            various components of our robot.
-    */
-    DrawHead(1.0f, 2.0f, 0.0f);
-    DrawTorso(1.5f, 0.0f, 0.0f);
-    glPushMatrix();
-
-
-    /*      If the arm is moving forward we will increase
-            the angle; otherwise, we will decrease the
-            angle.
-    */
-    if (arm1)
-    {
-        armAngle[0] = armAngle[0] + 1.0f;
-    }
-    else
-    {
-        armAngle[0] = armAngle[0] - 1.0f;
-    }
-
-    /*      Once the arm has reached its max angle
-            in one direction, we want it to reverse
-            and change direction.
-    */
-    if (armAngle[0] >= 15.0f)
-    {
-        arm1 = false;
-    }
-    if (armAngle[0] <= 15.0f)
-    {
-        arm1 = true;
-    }
-
-
-    /*      Here we are going to move the arm away
-            from the torso and rotate. This will
-            create a walking effect.
-    */
-    glTranslatef(0.0f, -0.5f, 0.0f);
-    glRotatef(armAngle[0], 1.0f, 0.0f, 0.0f);
-    DrawArm(2.5f, 0.0f, -0.5f);
-
-    glPopMatrix();
-
-    glPushMatrix();
-
-
-    /*      If the arm is moving forward we will increase
-            the angle, otherwise we will decrease the
-            angle
-    */
-    if (arm2)
-    {
-        armAngle[1] = armAngle[1] + 1.0f;
-    }
-    else
-    {
-        armAngle[1] = armAngle[1] - 1.0f;
-    }
-
-    /*      Here we are going to move the arm away
-            from the torso and rotate. This will
-            create a walking effect.
-    */
-    glTranslatef(0.0f, -0.5f, 0.0f);
-    glRotatef(armAngle[1], 1.0f, 0.0f, 0.0f);
-    DrawArm(-1.5f, 0.0f, -0.5f);
-
-    glPopMatrix();
-
-    /*      Now its time to rotate the legs relative to the
-            robots position in the world, this is the first
-            leg, ie the right one.
-    */
-    glPushMatrix();
-
-    /*      If the leg is moving forward we will increase
-            the angle; otherwise, we will decrease the
-            angle.
-    */
-    if (leg1)
-    {
-        legAngle[0] = legAngle[0] + 1.0f;
-    }
-    else
-    {
-        legAngle[0] = legAngle[0] - 1.0f;
-    }
-
-    /*      Once the leg has reached its max angle
-            in one direction, we want it to reverse
-            and change direction.
-    */
-    if (legAngle[0] >= 15.0f)
-    {
-        leg1 = false;
-    }
-    if (legAngle[0] <= -15.0f)
-    {
-        leg1 = true;
-    }
-
-
-    /*      Here we are going to move the leg away
-            from the torso and rotate. This will
-            create a walking effect.
-    */
-    glTranslatef(0.0f, -0.5f, 0.0f);
-    glRotatef(legAngle[0], 1.0f, 0.0f, 0.0f);
-
-
-    /*      Time to draw the leg.
-    */
-    DrawLeg(-0.5f, -5.0f, -0.5f);
-
-    glPopMatrix();
-
-    /*      Same as above, for the left leg.
-    */
-    glPushMatrix();
-
-    /*      If the leg is moving forward we will increase
-            the angle, otherwise we will decrease the
-            angle
-    */
-    if (leg2)
-    {
-        legAngle[1] = legAngle[1] + 1.0f;
-    }
-    else
-    {
-        legAngle[1] = legAngle[1] - 1.0f;
-    }
-
-    /*      Once the leg has reached its max angle
-            in one direction, we want it to reverse
-            and change direction.
-    */
-    if (legAngle[1] >= 15.0f)
-    {
-        leg2 = false;
-    }
-    if (legAngle[1] <= -15.0f)
-    {
-        leg2 = true;
-    }
-
-    /*      Here we are going to move the leg away
-            from the torso and rotate. This will
-            create a walking effect.
-    */
-    glTranslatef(0.0f, -0.5f, 0.0f);
-    glRotatef(legAngle[1], 1.0f, 0.0f, 0.0f);
-    DrawLeg(1.5f, -5.0f, -0.5f);
-
-    glPopMatrix();
-
-    glPopMatrix();
-
-}
-
-/*      Function:       Render
-        Purpose:        This function will be responsible
-                                for the rendering, got to love my
-                                descriptive function names : )
-*/
 
 float red = 0.0f;
 float green = 0.0f;
@@ -480,15 +172,26 @@ void Render(HWND& hWnd)
 
     float ang = rand() % angleLimit - angleLimitHalf;
 
-    myAngle += ang;
+    myAngle++;// += ang;
 
     float angle = myAngle * 3.14 / 180;
 
     transX += stepX * cos(angle) * dirX;//(float)(dirX * stepX) * cos(myAngle);
     transY += stepY * sin(angle) * dirY;//(float)(dirY * stepY) * sin(myAngle);
 
+    //transX = 10.0f * xMousePos / (float) height;
+    //transY = 10.0f * yMousePos / (float) width * -1;
+
+    length += 0.01f * dirX;
+
+    if (length > 11 || length < 9)
+        dirX * -1;
+
+    transX = xMousePos / (float)width + length * cos(angle);
+    transY = yMousePos / (float)height + length * sin(angle);
+
     glTranslatef(transX, transY, -30.0f);
-    glRotatef(myAngle, transX, transY, -30.0f);
+    glRotatef(myAngle * -1, transX, transY, -30.0f);
 
     if (abs(transX) > 20)
         dirX *= -1;
@@ -500,7 +203,9 @@ void Render(HWND& hWnd)
     //glRotatef(angle, 0.0f, 1.0f, 0.0f);
     //DrawRobot(0.0f, 0.0f, 0.0f);
     glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-    DrawLine(0, 0, 0, hWnd);
+    DrawLine(
+        //0, 0, 0, 
+        hWnd);
     glPopMatrix();
 
     glFlush();
@@ -549,6 +254,7 @@ void SetupPixelFormat(HDC hDC)
     SetPixelFormat(hDC, nPixelFormat, &pfd);
 }
 
+
 /*      Windows Event Procedure Handler
 */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -563,16 +269,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             window our robot is to be
             displayed in.
     */
-    int width, height;
 
-    int xPos;
-    int yPos;
 
     switch (message)
     {
     case WM_MOUSEMOVE:
-        xPos = GET_X_LPARAM(lParam);
-        yPos = GET_Y_LPARAM(lParam);
+        xMousePos = GET_X_LPARAM(lParam);
+        yMousePos = GET_Y_LPARAM(lParam);
         break;
 
     case WM_CREATE: //window being created
