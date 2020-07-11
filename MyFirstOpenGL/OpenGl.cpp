@@ -25,6 +25,7 @@
 
 #pragma comment(linker, "/subsystem:windows")
 
+#include <iostream>
 #include <sstream>
 #include <math.h>
 #include <windows.h>
@@ -34,6 +35,7 @@
 #include <time.h>
 #include <Windowsx.h>
 //#include <gl/glaux.h>
+#include "OpenGl.h"
 
 using namespace std;
 
@@ -43,6 +45,14 @@ using namespace std;
         program. These variables will control angles,
         fullscreen, and the global device context.
 */
+
+void MyOpenGL::Draw()
+{
+    vector<DrawingObject*>::const_iterator itr;
+    
+    for (itr = vec.begin(); itr != vec.end(); itr++)
+        (*itr)->Draw();
+}
 
 int width, height;
 
@@ -126,7 +136,7 @@ int dirAngle = 1;
 int angleLimit = 10.0f;
 int angleLimitHalf = 10.0f / 2.0f;
 
-void Render(HWND& hWnd)
+void MyOpenGL::Render()
 {
     /*      Enable depth testing
     */
@@ -203,9 +213,9 @@ void Render(HWND& hWnd)
     //glRotatef(angle, 0.0f, 1.0f, 0.0f);
     //DrawRobot(0.0f, 0.0f, 0.0f);
     glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-    DrawLine(
-        //0, 0, 0, 
-        hWnd);
+
+    Draw();
+
     glPopMatrix();
 
     glFlush();
@@ -213,6 +223,11 @@ void Render(HWND& hWnd)
     /*      Bring back buffer to foreground
     */
     SwapBuffers(g_HDC);
+}
+
+void MyOpenGL::Add(DrawingObject* obj)
+{
+    vec.push_back(obj);
 }
 
 //function to set the pixel format for the device context
@@ -453,6 +468,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     /* initialize random seed: */
     srand(time(NULL));
 
+    MyOpenGL myOpenGL;
+
+    myOpenGL.Add(new LineObject);
+
     /*      Main message loop*/
     while (!done)
     {
@@ -473,7 +492,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             {
                 sysTime1 = sysTime2;
 
-                Render(hwnd);
+                myOpenGL.Render();
             }
 
             TranslateMessage(&msg);

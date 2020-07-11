@@ -149,11 +149,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawingObject.cpp" />
+    <ClCompile Include="LineObject.cpp" />
     <ClCompile Include="MyTime.cpp" />
     <ClCompile Include="OpenGl.cpp" />
     <ClCompile Include="MyFirstOpenGL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrawingObject.h" />
+    <ClInclude Include="LineObject.h" />
     <ClInclude Include="MyTime.h" />
     <ClInclude Include="OpenGl.h" />
   </ItemGroup>
